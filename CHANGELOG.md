@@ -1,4 +1,4 @@
-0.7.1 (Next)
+0.7.1 (Nexts)
 ============
 
 * Your contribution here.
