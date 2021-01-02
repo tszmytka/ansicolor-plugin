@@ -27,6 +27,8 @@ import static hudson.plugins.ansicolor.AnsiAttributeElement.AnsiAttrType;
 
 import hudson.console.ConsoleNote;
 import hudson.util.NullStream;
+import org.fusesource.jansi.AnsiOutputStream;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -590,12 +592,12 @@ public class AnsiHtmlOutputStream extends AnsiOutputStream {
     }
 
     // set foreground color to non standard ANSI colors (90 - 97)
-    @Override
+//    @Override
     protected void processSetForegroundColor(int color, boolean bright) {
         setForegroundColor(colorMap.getBright(color));
     }
 
-    @Override
+/*    @Override
     protected void processSetForegroundColorExt(int paletteIndex) {
         setForegroundColor(getPaletteColor(paletteIndex));
     }
@@ -603,7 +605,7 @@ public class AnsiHtmlOutputStream extends AnsiOutputStream {
     @Override
     protected void processSetForegroundColorExt(int r, int g, int b) {
         setForegroundColor(getRgbColor(r, g, b));
-    }
+    }*/
 
     @Override
     protected void processSetBackgroundColor(int color) {
@@ -611,12 +613,12 @@ public class AnsiHtmlOutputStream extends AnsiOutputStream {
     }
 
     // set background color to non standard ANSI colors (100 - 107)
-    @Override
+//    @Override
     protected void processSetBackgroundColor(int color, boolean bright) {
         setBackgroundColor(colorMap.getBright(color));
     }
 
-    @Override
+/*    @Override
     protected void processSetBackgroundColorExt(int paletteIndex) {
         setBackgroundColor(getPaletteColor(paletteIndex));
     }
@@ -624,7 +626,7 @@ public class AnsiHtmlOutputStream extends AnsiOutputStream {
     @Override
     protected void processSetBackgroundColorExt(int r, int g, int b) {
         setBackgroundColor(getRgbColor(r, g, b));
-    }
+    }*/
 
     @Override
     protected void processDefaultTextColor() {
@@ -726,8 +728,8 @@ public class AnsiHtmlOutputStream extends AnsiOutputStream {
         emitter.emitInvisibleSequence();
     }
 
-    @Override
+/*    @Override
     protected void processCharsetSelect(int set, char seq) {
         emitter.emitInvisibleSequence();
-    }
+    }*/
 }

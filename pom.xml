@@ -63,6 +63,11 @@
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi</artifactId>
+      <version>2.1.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-cps</artifactId>
       <scope>test</scope>
@@ -139,6 +144,17 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.jenkins-ci.tools</groupId>
+        <artifactId>maven-hpi-plugin</artifactId>
+        <configuration>
+          <webApp>
+            <contextPath>/jenkins</contextPath>
+          </webApp>
+          <minimumJavaVersion>1.${java.level}</minimumJavaVersion>
+          <pluginFirstClassLoader>true</pluginFirstClassLoader>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>

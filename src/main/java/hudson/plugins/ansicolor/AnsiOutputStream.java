@@ -40,6 +40,7 @@ import java.util.Iterator;
  * @author Joris Kuipers
  * @since 1.0
  */
+@Deprecated
 public class AnsiOutputStream extends FilterOutputStream {
 
     public static final byte[] REST_CODE = resetCode();

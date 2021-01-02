@@ -207,7 +207,7 @@ public class AnsiColorBuildWrapperTest {
                     "node('!master') {\n"
                         + "  wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
                         + "    sh(\"\"\"#!/bin/bash\n"
-                        + "      printf 'The following word is supposed to be \\\\e[31mred\\\\e[0m\\\\n'\"\"\"\n"
+                        + "      printf 'The following word is supposed to be e[31mrede[0mn'\"\"\"\n"
                         + "    )\n"
                         + "  }\n"
                         + "}"
@@ -455,6 +455,20 @@ public class AnsiColorBuildWrapperTest {
                 "<b><span style=\"color: #FF00FF;\">[fe1b.k8sf.atom.us-east-2]</span></b>"
             ),
             Collections.singletonList(ESC),
+            inputProvider
+        );
+    }
+
+    @Issue("211")
+    @Test
+    public void canWorkWithProportionalSpacing() {
+        final Consumer<PrintStream> inputProvider = stream -> {
+            stream.println("\033[38;5;231mDropNa\033[22m\033[39m\033[26m starting\033[0m");
+        };
+
+        assertCorrectOutput(
+            Arrays.asList("<b><span style=\"color: #FFFFFF;\">DropNa</span></b><span style=\"color: #FFFFFF;\"></span> starting", "sta"),
+            Arrays.asList("[26m", "neither-is-this"),
             inputProvider
         );
     }
