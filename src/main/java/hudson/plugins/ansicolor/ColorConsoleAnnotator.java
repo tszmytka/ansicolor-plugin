@@ -34,13 +34,13 @@ import hudson.plugins.ansicolor.action.ColorizedAction;
 import hudson.plugins.ansicolor.action.LineIdentifier;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.output.CountingOutputStream;
-import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jenkinsci.plugins.workflow.flow.FlowExecutionOwner;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -110,7 +110,7 @@ final class ColorConsoleAnnotator extends ConsoleAnnotator<Object> {
         List<AnsiAttributeElement> nextOpenTags = openTags;
         AnsiColorMap colorMap = Jenkins.get().getDescriptorByType(AnsiColorBuildWrapper.DescriptorImpl.class).getColorMap(colorMapName);
         if (s.indexOf('\u001B') != -1 || !openTags.isEmpty() || colorMap.getDefaultBackground() != null || colorMap.getDefaultForeground() != null) {
-            CountingOutputStream outgoing = new CountingOutputStream(new NullOutputStream());
+            CountingOutputStream outgoing = new CountingOutputStream(new ByteArrayOutputStream() /*new NullOutputStream()*/);
             class EmitterImpl implements AnsiAttributeElement.Emitter {
                 CountingOutputStream incoming;
                 int adjustment;
@@ -160,7 +160,7 @@ final class ColorConsoleAnnotator extends ConsoleAnnotator<Object> {
             // We need to reopen tags that were still open at the end of the previous line so the stream's state is
             // correct in case those tags are closed in the middle of this line.
             try (
-                AnsiHtmlOutputStream ansiOs = new AnsiHtmlOutputStream(outgoing, new AnsiToHtmlProcessor(outgoing, colorMap, emitter, new ArrayList<>(openTags)), emitter, openTags);
+                AnsiHtmlOutputStream ansiOs = new AnsiHtmlOutputStream(outgoing, new AnsiToHtmlProcessor(outgoing, colorMap, emitter, new ArrayList<>(openTags)), emitter);
                 CountingOutputStream incoming = new CountingOutputStream(ansiOs)
             ) {
                 emitter.incoming = incoming;

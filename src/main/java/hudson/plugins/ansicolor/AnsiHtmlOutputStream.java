@@ -47,6 +47,7 @@ import java.util.List;
  * somewhere else.
  */
 public class AnsiHtmlOutputStream extends AnsiOutputStream {
+    private static final OutputStream NULL_STREAM = new NullStream();
     private final AnsiAttributeElement.Emitter emitter;
 
     private enum State {
@@ -151,8 +152,6 @@ public class AnsiHtmlOutputStream extends AnsiOutputStream {
             amblePos++;
         }
     }
-
-    public static final OutputStream NULL_STREAM = new NullStream();
 
     private void processAndwriteToOutputStream(int b) throws IOException {
         out = processor.isWritingEnabled() ? logOutput : NULL_STREAM;
