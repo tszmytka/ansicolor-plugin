@@ -36,12 +36,14 @@ import jenkins.model.Jenkins;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.fusesource.jansi.AnsiMain;
 import org.jenkinsci.plugins.workflow.flow.FlowExecutionOwner;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -159,7 +161,7 @@ final class ColorConsoleAnnotator extends ConsoleAnnotator<Object> {
             // We need to reopen tags that were still open at the end of the previous line so the stream's state is
             // correct in case those tags are closed in the middle of this line.
             try (
-                AnsiHtmlOutputStream ansiOs = new AnsiHtmlOutputStream(outgoing, colorMap, emitter, openTags);
+                AnsiHtmlOutputStream ansiOs = new AnsiHtmlOutputStream(outgoing, new AnsiToHtmlProcessor(outgoing, colorMap, emitter, new ArrayList<>(openTags)), colorMap, emitter, openTags);
                 CountingOutputStream incoming = new CountingOutputStream(ansiOs)
             ) {
                 emitter.incoming = incoming;

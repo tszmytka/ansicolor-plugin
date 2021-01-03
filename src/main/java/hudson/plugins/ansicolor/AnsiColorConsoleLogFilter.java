@@ -7,6 +7,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -73,13 +75,12 @@ public final class AnsiColorConsoleLogFilter extends ConsoleLogFilter implements
 
     @SuppressWarnings("rawtypes")
     @Override
-    public OutputStream decorateLogger(AbstractBuild build, final OutputStream logger)
-            throws IOException, InterruptedException {
+    public OutputStream decorateLogger(AbstractBuild build, final OutputStream logger) throws IOException, InterruptedException {
         if (logger == null) {
             return null;
         }
 
-        return new AnsiHtmlOutputStream(logger, colorMap, new AnsiAttributeElement.Emitter() {
+        final AnsiAttributeElement.Emitter emitter = new AnsiAttributeElement.Emitter() {
             @Override
             public void emitHtml(@Nonnull String html) {
                 try {
@@ -94,6 +95,7 @@ public final class AnsiColorConsoleLogFilter extends ConsoleLogFilter implements
                     LOGGER.log(Level.WARNING, "Failed to add HTML markup '" + html + "'", e);
                 }
             }
-        });
+        };
+        return new AnsiHtmlOutputStream(logger, new AnsiToHtmlProcessor(logger, colorMap, emitter, Collections.emptyList()), colorMap, emitter);
     }
 }

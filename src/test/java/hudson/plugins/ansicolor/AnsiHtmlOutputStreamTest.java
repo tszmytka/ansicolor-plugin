@@ -29,6 +29,8 @@ import org.junit.Test;
 import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
@@ -615,7 +617,7 @@ public class AnsiHtmlOutputStreamTest {
 
     private String annotate(String text, AnsiColorMap colorMap) throws IOException {
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        AnsiHtmlOutputStream ansi = new AnsiHtmlOutputStream(bos, colorMap, new AnsiAttributeElement.Emitter() {
+        final AnsiAttributeElement.Emitter emitter = new AnsiAttributeElement.Emitter() {
             public void emitHtml(@Nonnull String html) {
                 try {
                     bos.write(html.getBytes(UTF_8));
@@ -623,7 +625,8 @@ public class AnsiHtmlOutputStreamTest {
                     throw new RuntimeException("error emitting HTML", e);
                 }
             }
-        });
+        };
+        AnsiHtmlOutputStream ansi = new AnsiHtmlOutputStream(bos, new AnsiToHtmlProcessor(bos, colorMap, emitter, new ArrayList<>()), colorMap, emitter);
         ansi.write(text.getBytes(UTF_8));
         ansi.close();
         return bos.toString(UTF_8.displayName());
