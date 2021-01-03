@@ -1,7 +1,6 @@
 package hudson.plugins.ansicolor;
 
 import hudson.plugins.ansicolor.AnsiAttributeElement.AnsiAttrType;
-import hudson.util.NullStream;
 import org.fusesource.jansi.io.AnsiProcessor;
 
 import java.io.OutputStream;
@@ -599,5 +598,9 @@ public class AnsiToHtmlProcessor extends AnsiProcessor {
     public void finish() {
         stopConcealing();
         closeOpenTags(null);
+    }
+
+    List<AnsiAttributeElement> getOpenTags() {
+        return new ArrayList<>(openTags);
     }
 }

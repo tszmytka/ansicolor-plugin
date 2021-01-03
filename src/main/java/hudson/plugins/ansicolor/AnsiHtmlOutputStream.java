@@ -33,10 +33,7 @@ import org.fusesource.jansi.io.AnsiOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import javax.annotation.Nonnull;
 
 /**
  * Filters an output stream of ANSI escape sequences and emits appropriate HTML elements instead.
@@ -50,7 +47,6 @@ import javax.annotation.Nonnull;
  * somewhere else.
  */
 public class AnsiHtmlOutputStream extends AnsiOutputStream {
-    private final AnsiColorMap colorMap;
     private final AnsiAttributeElement.Emitter emitter;
 
     private enum State {
@@ -60,38 +56,23 @@ public class AnsiHtmlOutputStream extends AnsiOutputStream {
     private State state = State.INIT;
     private int amblePos = 0;
 
-    private String currentForegroundColor = null;
-    private String currentBackgroundColor = null;
-    private boolean swapColors = false;  // true if negative / inverse mode is active (esc[7m)
-
-    // A Deque might be a better choice, but we are constrained by the Java 5 API.
-    private final ArrayList<AnsiAttributeElement> openTags;
-
     private final OutputStream logOutput;
 
     private final AnsiToHtmlProcessor processor;
 
-    /**
-     * @param tagsToOpen A list of tags to open in the given order immediately after opening the tag for the default foreground/background colors (if such colors are specified by the color map) before
-     * any data is written to the underlying stream.
-     */
     AnsiHtmlOutputStream(
         final OutputStream os,
         final AnsiToHtmlProcessor processor,
-        final AnsiColorMap colorMap,
-        final AnsiAttributeElement.Emitter emitter,
-        @Nonnull List<AnsiAttributeElement> tagsToOpen
+        final AnsiAttributeElement.Emitter emitter
     ) {
         super(os, AnsiMode.Default, processor, AnsiType.Emulation, AnsiColors.TrueColor, StandardCharsets.UTF_8, null, null, false);
         this.logOutput = os;
-        this.colorMap = colorMap;
         this.emitter = emitter;
-        this.openTags = new ArrayList<>(tagsToOpen);
         this.processor = processor;
     }
 
     public AnsiHtmlOutputStream(final OutputStream os, final AnsiToHtmlProcessor processor, final AnsiColorMap colorMap, final AnsiAttributeElement.Emitter emitter) {
-        this(os, processor, colorMap, emitter, Collections.emptyList());
+        this(os, processor, emitter);
     }
 
     // Debug output for plugin developers. Puts the debug message into the html page
@@ -107,7 +88,7 @@ public class AnsiHtmlOutputStream extends AnsiOutputStream {
      * @return A copy of the {@link AnsiAttributeElement}s which are currently opened, in order from outermost to innermost tag.
      */
     List<AnsiAttributeElement> getOpenTags() {
-        return new ArrayList<>(openTags);
+        return processor.getOpenTags();
     }
 
 
